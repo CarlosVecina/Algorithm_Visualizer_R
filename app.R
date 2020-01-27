@@ -1,6 +1,7 @@
 library (shiny)
-library (tidyverse)
+library (ggimage)
 library (ggplot2)
+library (tidyverse)
 source("helpers/ColourBorders.R")
 source("helpers/PlotMapGrid.R")
 
@@ -18,14 +19,30 @@ ui <- fluidPage(
 
 server <- function(input, output){
     
+    ## Initial params
+    max_steps <- 50
     matrix_x_size <- 20
     matrix_y_size <- 20
-    grid_map_reactive <- matrix(ncol = matrix_x_size, nrow = matrix_y_size, data = 0)        
+    grid_map_reactive <- matrix(ncol = matrix_x_size,
+                                nrow = matrix_y_size,
+                                data = 0)    
+    
+    ## Colours Dict (in progress)
+    # 1- Wall
+    # 2- Init
+    # 3- Obj
+    # 4- Step done
+    # 5- Goal achieved
+    
+    # Initialize objts
     grid_map_reactive[4,15] <- 3                                                           # obj
     grid_map_reactive[17,3] <- 2                                                           # init
-    initial_step <- which(grid_map_reactive == 2, arr.ind = TRUE)
-    grid_map_reactive <- ColourBorders(grid_map_reactive, 1)
-    react_df <- reactiveValues(df = grid_map_reactive, orig = grid_map_reactive, walls = grid_map_reactive)
+    initial_step <- which(grid_map_reactive == 2,
+                          arr.ind = TRUE)
+    grid_map_reactive <- ColourBorders(grid_map_reactive, 1)                               # rounding walls
+    react_df <- reactiveValues(df = grid_map_reactive,
+                               orig = grid_map_reactive,
+                               walls = grid_map_reactive)
     
     observe({
         if(!is.null(input$map_grid_plotOutput_click)){
